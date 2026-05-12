@@ -1,0 +1,16 @@
+{
+  "name": "Credit Perks",
+  "short_name": "Perks",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f6f1df",
+  "theme_color": "#f6f1df",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
