@@ -265,11 +265,13 @@ function renderBenefit(benefit) {
   const hasSpend = typeof benefit.spendCap === 'number';
   const spendPct = hasSpend ? Math.min(((benefit.currentSpend || 0) / (benefit.spendCap || 1)) * 100, 100) : 0;
   const subText = benefitSubText(benefit, deadline);
+  const displayTitle = `${titleCaseLabel(benefit.name)} · ${titleCaseLabel(effectiveValueLabel(benefit))}`;
+  const isLong = hasSpend || displayTitle.length > 46 || subText.length > 58;
   return `
-    <div class="benefit ${benefit.currentPeriodUsed ? 'used' : ''} ${hasSpend ? 'has-spend' : ''}">
+    <div class="benefit ${benefit.currentPeriodUsed ? 'used' : ''} ${hasSpend ? 'has-spend' : ''} ${isLong ? 'benefit-long' : ''}">
       <label>
         <input type="checkbox" ${benefit.currentPeriodUsed ? 'checked' : ''} data-action="toggle-used" data-id="${benefit.id}">
-        <span><span class="benefit-name">${escapeHtml(titleCaseLabel(benefit.name))} · ${escapeHtml(titleCaseLabel(effectiveValueLabel(benefit)))}</span><span class="row-sub">${escapeHtml(subText)}</span>${hasSpend ? `<span class="spend-block"><span>$${(benefit.currentSpend || 0).toLocaleString()} / $${benefit.spendCap.toLocaleString()} Used This Quarter</span><span class="progress"><span style="width:${spendPct}%"></span></span></span>` : ''}</span>
+        <span><span class="benefit-name">${escapeHtml(displayTitle)}</span><span class="row-sub">${escapeHtml(subText)}</span>${hasSpend ? `<span class="spend-block"><span>$${(benefit.currentSpend || 0).toLocaleString()} / $${benefit.spendCap.toLocaleString()} Used This Quarter</span><span class="progress"><span style="width:${spendPct}%"></span></span></span>` : ''}</span>
       </label>
       <div class="row-actions">
         ${hasSpend ? `<label class="spend-input"><span>$</span><input type="number" min="0" max="${benefit.spendCap}" value="${benefit.currentSpend || 0}" data-action="update-spend" data-id="${benefit.id}" aria-label="Current spend for ${escapeAttr(benefit.name)}"></label>` : ''}
