@@ -52,6 +52,7 @@ let data = loadData();
 let valueView = false;
 let modal = null;
 let attentionOpen = true;
+const cardOpenState = {};
 
 function loadData() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || sampleData; } catch { return sampleData; }
@@ -210,7 +211,7 @@ function renderAvailable() {
         <div><h2>🎯 Still Available</h2><p class="row-sub">${monthLabel()}</p></div>
         <div class="panel-tools">
           <span class="count">${items.length} open</span>
-          <button class="fold-button" data-action="toggle-attention" aria-expanded="${attentionOpen}">${attentionOpen ? 'Fold' : 'Open'}</button>
+          <button class="fold-button icon-fold" data-action="toggle-attention" aria-label="${attentionOpen ? 'Fold Still Available' : 'Open Still Available'}" aria-expanded="${attentionOpen}">${attentionOpen ? '⌃' : '⌄'}</button>
         </div>
       </div>
       ${attentionOpen ? (items.length ? `<div class="available-list">${visibleItems.map(renderAvailableRow).join('')}${items.length > visibleItems.length ? `<p class="more-line">${items.length - visibleItems.length} more items in card modules</p>` : ''}</div>` : `<div class="empty">Everything is checked off for this period.</div>`) : ''}
@@ -236,6 +237,7 @@ function renderCard(card) {
   const currentCategory = rotating?.rotatingCategories?.[quarterKey()];
   const captured = capturedYtd(benefits);
   const feeText = card.annualFee === 0 ? '0️⃣ Annual Fee' : `Annual Fee: $${(card.annualFee || 0).toLocaleString()} · Captured YTD: $${captured.toLocaleString()} / $${(card.annualFee || 0).toLocaleString()}`;
+  const isOpen = cardOpenState[card.id] ?? true;
   return `
     <article class="card">
       <div class="card-head">
@@ -250,10 +252,11 @@ function renderCard(card) {
             <button class="button" data-action="edit-card" data-id="${card.id}">Edit</button>
             <button class="button danger" data-action="delete-card" data-id="${card.id}">Delete</button>
           </div>
+          <button class="button icon-fold fold-card-action" data-action="toggle-card" data-id="${card.id}" aria-label="${isOpen ? `Fold ${escapeAttr(card.name)}` : `Open ${escapeAttr(card.name)}`}" aria-expanded="${isOpen}">${isOpen ? '⌃' : '⌄'}</button>
           <button class="button primary add-benefit-action" data-action="add-benefit" data-card-id="${card.id}">Add Benefit ✨</button>
         </div>
       </div>
-      <div class="benefits">${benefits.length ? benefits.map(renderBenefit).join('') : '<div class="empty">No benefits yet. Add the first one for this card.</div>'}</div>
+      ${isOpen ? `<div class="benefits">${benefits.length ? benefits.map(renderBenefit).join('') : '<div class="empty">No Benefits Yet. Add the first one for this card.</div>'}</div>` : ''}
     </article>`;
 }
 
@@ -396,6 +399,7 @@ function handleAction(event) {
   if (action === 'update-spend') return;
   if (action === 'toggle-value') { valueView = !valueView; return render(); }
   if (action === 'toggle-attention') { attentionOpen = !attentionOpen; return render(); }
+  if (action === 'toggle-card') { cardOpenState[target.dataset.id] = !(cardOpenState[target.dataset.id] ?? true); return render(); }
   if (action === 'reset-month') { data.benefits = data.benefits.map((b) => ({ ...b, currentPeriodUsed: b.frequency === 'monthly' ? false : b.currentPeriodUsed, activated: b.activationRequired ? false : b.activated })); saveData(); return render(); }
   if (action === 'reset-quarter') { data.benefits = data.benefits.map((b) => b.frequency === 'quarterly' ? { ...b, currentPeriodUsed: false, activated: b.activationRequired ? false : b.activated, currentSpend: typeof b.currentSpend === 'number' ? 0 : b.currentSpend } : b); saveData(); return render(); }
   if (action === 'export-backup') return exportBackup();

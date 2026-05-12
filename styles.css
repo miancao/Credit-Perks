@@ -38,6 +38,7 @@ h2, h3, p { margin-top: 0; }
 .attention-panel .panel-head { margin-bottom: 8px; }
 .panel-tools { display: flex; align-items: center; gap: 8px; }
 .fold-button { min-height: 34px; border: 1px solid rgba(0,0,0,.08); border-radius: 999px; background: #fff; padding: 0 12px; color: #6e6e73; font-size: 13px; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,.04); }
+.icon-fold { min-width: 38px; width: 38px; padding: 0; font-size: 18px; line-height: 1; }
 .attention-panel .available-row { padding: 10px 0; }
 .attention-panel .row-title { font-size: 14px; }
 .attention-panel .row-sub { font-size: 13px; }
@@ -136,5 +137,6 @@ h2, h3, p { margin-top: 0; }
   .card-head { align-items: flex-start; }
   .card-actions { display: grid; grid-template-columns: auto auto; justify-content: end; justify-items: end; }
   .secondary-actions { display: contents; }
-  .add-benefit-action { grid-column: 1 / -1; grid-row: 2; }
+  .fold-card-action { grid-column: 1; grid-row: 2; }
+  .add-benefit-action { grid-column: 2; grid-row: 2; }
 }
